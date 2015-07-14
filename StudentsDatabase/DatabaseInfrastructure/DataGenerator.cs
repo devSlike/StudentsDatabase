@@ -192,11 +192,10 @@ namespace StudentsDatabase.DatabaseInfrastructure
             foreach (var user in users)
             {
                 var questionsForCategory = GetQuestionsForTestCategory(user.Category);
-                for (var j = 0; j < 4; ++j)
+                for (var j = 0; j < 1; ++j)
                 {
                     var testWork = GetTestWorkForUserAndCategory(user, questionsForCategory);
-                    context.TestWorks.Add(testWork);
-                    context.SaveChanges();
+                    testWorks.Add(testWork);
                 }
             }
             return testWorks;

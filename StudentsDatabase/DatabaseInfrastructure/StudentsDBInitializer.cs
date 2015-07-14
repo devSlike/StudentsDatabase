@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace StudentsDatabase.DataBaseInfrastructure
 {
-    public class StudentsDBInitializer : CreateDatabaseIfNotExists<StudentsContext>
-    //public class StudentsDBInitializer : DropCreateDatabaseAlways<StudentsContext>
+    //public class StudentsDBInitializer : CreateDatabaseIfNotExists<StudentsContext>
+    public class StudentsDBInitializer : DropCreateDatabaseAlways<StudentsContext>
     {
         protected override void Seed(StudentsContext context)
         {

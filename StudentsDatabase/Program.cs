@@ -44,9 +44,9 @@ namespace StudentsDatabase
             //Список успешных студентов по городам.
             Console.WriteLine("\n\nСписок успешных студентов по городам");
             var report5 = from t in context.Users
-                          where t.TestWorks.Where(x => x.Score >= x.Test.PassingScore && x.Time <= x.Test.MaxTime).Count() == t.TestWorks.Count
+                          where t.TestWorks.Count(x => x.Score >= x.Test.PassingScore && x.Time <= x.Test.MaxTime) == t.TestWorks.Count
                           group t by t.City into g
-                          select new { City = g.Key, Users = g.ToList() };
+                          select new { City = g.Key, Users = g.Select(item => item) };
             try
             {
                 foreach (var r in report5)
@@ -74,8 +74,8 @@ namespace StudentsDatabase
                                                   Time = tw.Time,
                                                   ScoreByCategory = from q in tw.Test.Answers
                                                                     group q by q.Question.Category into g
-                                                                    select new { Category = g.Key, Percent = g.Count() / tw.Test.Answers.Count() * 100 }
-                                              }).ToList()
+                                                                    select new { Category = g.Key, Percent = (Double)g.Count() / tw.Test.Answers.Count() * 100 }
+                                              })
                           };
             try
             {
