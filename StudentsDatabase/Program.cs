@@ -47,10 +47,17 @@ namespace StudentsDatabase
                           where t.TestWorks.Where(x => x.Score >= x.Test.PassingScore && x.Time <= x.Test.MaxTime).Count() == t.TestWorks.Count
                           group t by t.City into g
                           select new { City = g.Key, Users = g.ToList() };
-            foreach (var r in report5)
+            try
             {
-                Console.WriteLine(String.Format("Город {0}", r.City.Name));
-                ShowUsersList(r.Users);
+                foreach (var r in report5)
+                {
+                    Console.WriteLine(String.Format("Город {0}", r.City.Name));
+                    ShowUsersList(r.Users);
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(String.Format("Ошибка выполнения запроса", ex.Message));
             }
 
             //Результат для каждого студента - его баллы, время, баллы в процентах для каждой категории.
@@ -70,16 +77,23 @@ namespace StudentsDatabase
                                                                     select new { Category = g.Key, Percent = g.Count() / tw.Test.Answers.Count() * 100 }
                                               }).ToList()
                           };
-            foreach (var r in report6)
+            try
             {
-                Console.WriteLine(String.Format("Студент {0}", r.User.ToString()));
-                foreach (var tr in r.TestsResults)
+                foreach (var r in report6)
                 {
-                    Console.Write(String.Format("Тестовая работа {0}, баллы: {1}, время: {2}", tr.Name, tr.Score, tr.Time));
-                    foreach (var cat in tr.ScoreByCategory)
-                        Console.Write(String.Format("{0}: {1}%", cat.Category.Name, cat.Percent.ToString()));
-                    Console.WriteLine();
+                    Console.WriteLine(String.Format("Студент {0}", r.User.ToString()));
+                    foreach (var tr in r.TestsResults)
+                    {
+                        Console.Write(String.Format("Тестовая работа {0}, баллы: {1}, время: {2}", tr.Name, tr.Score, tr.Time));
+                        foreach (var cat in tr.ScoreByCategory)
+                            Console.Write(String.Format("{0}: {1}%", cat.Category.Name, cat.Percent.ToString()));
+                        Console.WriteLine();
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(String.Format("Ошибка выполнения запроса", ex.Message));
             }
 
             //Рейтинг популярности вопросов в тестах (выводить количество использования данного вопроса в тестах)
@@ -122,12 +136,11 @@ namespace StudentsDatabase
                             from tw in user.TestWorks
                             from q in tw.Test.Answers
                             group q by q.Question into g
-                            orderby g.Count() descending
-                            select new { Question = g.Key, Score = g.Count(x => x.Correct) }).ToList();
+                            select new { Question = g.Key, Score = g.Count(x => x.Correct) }).OrderByDescending(x => x.Score).ToList();
             for (var i = 0; i < report10.Count(); ++i)
             {
                 var r = report10[i];
-                Console.WriteLine(String.Format("№{0} Вопрос - {0}, набрано баллов - {1}", r.Question.Text, r.Score.ToString()));
+                Console.WriteLine(String.Format("№{0} Вопрос - {1}, набрано баллов - {2}", i.ToString(), r.Question.Text, r.Score.ToString()));
             }
             Console.ReadKey();
         }
